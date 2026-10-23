@@ -50,9 +50,9 @@ The product is **ColorLast Shampoo for Color-Treated Hair**, priced at **$6.33**
 
 | ID | File | Constraint | What the user sees |
 |---|---|---|---|
-| **P1** | `index-p1.html` | **Availability limit.** Only 24 units can ship. | A blue info notice reads "Only **24** available for shipping". The quantity selector stops at 24. The notice shows when the quantity is close to the cap. |
-| **P2** | `index-p2.html` | **Purchase limit.** Stock is fine, but a policy caps the order at 10 per customer. | A blue info notice reads "You can add up to **10** items to your Bag". The quantity selector stops at 10. |
-| **P3** | `index-p3.html` | **Limit of 1.** Only 1 unit can be reserved for 2-Hour Delivery. | 2-hr Delivery is preselected and the notice reads "Only **1** available item for 2-Hour Delivery". There's no quantity selector, so Add to Bag spans the full width. Tapping Add to Bag switches the page to the P4 state. |
+| **P1** | `index-p1.html` | **Availability limit.** Only 24 units can ship. | The quantity starts at 1. With Shipping selected it stops at 24, and a blue info notice, "Only **24** available for shipping", appears only at 24 and disappears as soon as the quantity drops to 23. With Pickup or 2-hr Delivery selected there is no cap and no notice. Switching back to Shipping with more than 24 drops the quantity to 24 and shows the notice. |
+| **P2** | `index-p2.html` | **Purchase limit.** Stock is fine, but a policy caps the order at 10 per customer. | The quantity starts at 1 and stops at 10. A blue info notice, "You can add up to **10** items to your Bag", appears only at 10 and disappears as soon as the quantity drops to 9. |
+| **P3** | `index-p3.html` | **Limit of 1, Pickup only.** Only 1 unit can be reserved for In-Store Pickup; Shipping and 2-hr Delivery are unlimited. | Pickup is preselected and the notice reads "Only **1** available item for Pickup". There's no quantity selector, so Add to Bag spans the full width. Tapping Add to Bag switches to the P4 state ("already in your Bag" + **Go to Bag**, which keeps the user on the product page). Switching to Shipping or 2-hr Delivery hides the notice and brings back an unlimited quantity selector and Add to Bag. |
 | **P4** | `index-p4.html` | **Limit reached.** The 1 allowed unit is already in the bag. | The notice reads "**This product is already in your Bag.** You can add 1 to your Bag." The main button becomes an outlined **Go to Bag**, which links to the bag. |
 
 ### Shopping Bag scenarios
@@ -62,6 +62,8 @@ Each bag holds two products:
 - **ChromaSilk VIVIDS Semi-Permanent Color:** 1 unit at $9.00 ($9.00, was $10.00). This item has no problem.
 
 A red banner at the top reads "Availability changed for (1) items since your last visit", with a **Review** link that scrolls to the item.
+
+**Checkout** is greyed out while any item still has an availability issue. Tapping it anyway scrolls to the problem item and pulses its red outline. Checkout becomes active as soon as the issue is resolved, whether by adjusting the quantity, switching method or store, or removing the item.
 
 | ID | File | Situation | Alert on the item | Fallback offered | Result of the main action |
 |---|---|---|---|---|---|
@@ -107,7 +109,7 @@ A red banner at the top reads "Availability changed for (1) items since your las
 ## Suggested task framing (starting points; please refine)
 
 - **PDP:** "You need to restock this shampoo for your salon and want enough for the next month (about 30 bottles). Go ahead and add what you need."
-- **P3 → P4:** "You need this shampoo today. Get it on its way to you as quickly as possible." Then ask them to try to get a second bottle.
+- **P3 → P4:** "You're near the store and want to pick this shampoo up on your way in today." Then ask them to try to get a second bottle, and observe whether they discover that Shipping or 2-hr Delivery allows more.
 - **B1/B2/B3:** "You come back to finish an order you started yesterday. Review your bag and get it ready to check out." Each bag gets a different variant.
 - **R4:** same framing as the bag tasks. Observe what they do with the item that can't be fulfilled.
 
@@ -118,7 +120,7 @@ A red banner at the top reads "Availability changed for (1) items since your las
 - **Static prototype:** search, navigation menus, Change links, promo codes, checkout, Apple Pay and PayPal don't do anything.
 - **Data:** prices, stores and addresses are placeholders. The PDP shows one product (ColorLast); the bags show different products (BlondMe, ChromaSilk).
 - **Separate pages:** each scenario is its own page. The PDP doesn't carry over to the bag, except that **Go to Bag** in P4 opens B1.
-- **Delivery options don't drive the notice:** switching the delivery option on P1/P2 doesn't change the limit message.
+- **Delivery options and the notice:** on P1 the 24-unit cap applies only to Shipping. On P2, switching the delivery option doesn't change the limit message.
 - **Hub page:** `index.html` describes each scenario. Don't show it to participants, because it gives away the answers. Open scenario files directly.
 - **Device:** test on both desktop and mobile if possible, since the layouts differ. On mobile the delivery address truncates with "…".
 

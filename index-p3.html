@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ColorLast Shampoo — P3: Limit of 1 (2-Hour Delivery)</title>
+<title>ColorLast Shampoo — P3: Limit of 1 (Pickup)</title>
 <style>
   :root {
     --black: #000;
@@ -804,6 +804,8 @@
   .ship-row + .ship-row { margin-top: -14px; }
 
   .buy-row.no-qty { grid-template-columns: 1fr auto; }
+  .buy-row.no-qty .qty { display: none; }
+  .limit-notice.hidden { display: none; }
 
   .btn-outline.go-to-bag { font-size: 15px; }
 
@@ -1383,7 +1385,7 @@
           </span>
         </div>
 
-        <div class="delivery-option" data-opt="pickup">
+        <div class="delivery-option active" data-opt="pickup">
           <span class="d-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
@@ -1398,7 +1400,7 @@
           </span>
         </div>
 
-        <div class="delivery-option active" data-opt="2hr">
+        <div class="delivery-option" data-opt="2hr">
           <span class="d-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
@@ -1414,6 +1416,7 @@
         </div>
       </div>
 
+      <div class="ship-rows">
       <div class="ship-row">
         <div class="ship-text">
           <span class="ship-label">Deliver from:</span>
@@ -1428,13 +1431,19 @@
         </div>
         <a href="#" class="change">Change</a>
       </div>
+      </div>
 
       <div class="limit-notice" role="status">
         <i class="info-dot" aria-hidden="true">i</i>
-        <span>Only <strong>1</strong> available item for 2-Hour Delivery</span>
+        <span class="limit-text">Only <strong>1</strong> available item for Pickup</span>
       </div>
 
       <div class="buy-row no-qty">
+        <div class="qty">
+          <button type="button" id="qtyMinus" aria-label="Decrease quantity">−</button>
+          <input type="number" id="qtyInput" value="1" min="1" />
+          <button type="button" id="qtyPlus" aria-label="Increase quantity">+</button>
+        </div>
         <button class="btn-primary" id="addToBag">Add to Bag</button>
         <button class="btn-outline save-btn" aria-label="Save to List">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -2001,40 +2010,89 @@
     });
   }
 
-  document.getElementById('addToBag')?.addEventListener('click', (e) => {
-    const btn = e.currentTarget;
-    if (btn.dataset.inBag === '1') return; // already transitioned
-    // brief confirmation, then morph to the "in bag" (P4) state
+  // ========= 1-BOTTLE LIMIT (PICKUP ONLY) =========
+  // Pickup can reserve 1 bottle: no qty stepper, limit notice, and once added
+  // the CTA becomes "Go to Bag". Shipping and 2-hr Delivery are unlimited.
+  const LIMIT_OPT = 'pickup';
+  let pickupInBag = false;
+  const activeOpt = () => document.querySelector('.delivery-option.active')?.dataset.opt;
+  function setCta(state) {
+    const btn = document.getElementById('addToBag') || document.getElementById('goToBag');
+    if (!btn) return;
+    btn.style.background = '';
+    btn.disabled = false;
+    if (state === 'inBag') {
+      btn.className = 'btn-outline go-to-bag';
+      btn.id = 'goToBag';
+      btn.textContent = 'Go to Bag';
+      btn.style.height = '48px';
+      btn.style.fontSize = '15px';
+      btn.style.flex = '1';
+      // Prototype: Go to Bag stays on the PDP
+    } else {
+      btn.className = 'btn-primary';
+      btn.id = 'addToBag';
+      btn.textContent = 'Add to Bag';
+      btn.style.height = btn.style.fontSize = btn.style.flex = '';
+    }
+  }
+  function applyFulfillment() {
+    const limited = activeOpt() === LIMIT_OPT;
+    const notice = document.querySelector('.limit-notice');
+    document.querySelector('.buy-row')?.classList.toggle('no-qty', limited);
+    if (notice) {
+      notice.classList.toggle('hidden', !limited);
+      notice.style.alignItems = pickupInBag ? 'flex-start' : '';
+      notice.innerHTML = pickupInBag
+        ? '<i class="info-dot" aria-hidden="true">i</i><span><strong>This product is already in your Bag.</strong> You can add 1 to your Bag.</span>'
+        : '<i class="info-dot" aria-hidden="true">i</i><span class="limit-text">Only <strong>1</strong> available item for Pickup</span>';
+    }
+    setCta(limited && pickupInBag ? 'inBag' : 'add');
+  }
+  document.querySelector('.buy-row')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('#addToBag');
+    if (!btn || btn.disabled) return;
+    const limited = activeOpt() === LIMIT_OPT;
     btn.textContent = 'Added ✓';
     btn.style.background = '#0a8043';
     btn.disabled = true;
     setTimeout(() => {
-      // swap the notice to the P4 copy
-      const notice = document.querySelector('.limit-notice');
-      if (notice) {
-        notice.innerHTML = '<i class="info-dot" aria-hidden="true">i</i><span><strong>This product is already in your Bag.</strong> You can add 1 to your Bag.</span>';
-        notice.style.alignItems = 'flex-start';
-      }
-      // swap the primary CTA to outlined "Go to Bag"
-      btn.classList.remove('btn-primary');
-      btn.classList.add('btn-outline', 'go-to-bag');
-      btn.id = 'goToBag';
-      btn.textContent = 'Go to Bag';
-      btn.style.background = '';
-      btn.style.height = '48px';
-      btn.style.fontSize = '15px';
-      btn.style.flex = '1';
-      btn.disabled = false;
-      btn.dataset.inBag = '1';
-      btn.onclick = () => { window.location.href = 'bag-b1.html'; };
-    }, 900);
+      if (limited) pickupInBag = true;
+      applyFulfillment();
+    }, limited ? 900 : 1200);
   });
+
+  // ========= SHIP / PICKUP / DELIVER ADDRESS =========
+  // Address rows follow the selected delivery option
+  const SHIP_ROWS = {
+    shipping: [['Ship to:', '1451 University Ave, St Paul']],
+    pickup: [['Pickup from:', 'CosmoProf #4212 - 193 Pennsylvania Ave E, St Paul']],
+    '2hr': [['Deliver from:', '193 Pennsylvania Ave E, St Paul'], ['Deliver to:', '1451 University Ave, St Paul']],
+  };
+  function renderShipRows() {
+    const wrap = document.querySelector('.ship-rows');
+    const active = document.querySelector('.delivery-option.active');
+    const rows = active && SHIP_ROWS[active.dataset.opt];
+    if (!wrap || !rows) return;
+    wrap.innerHTML = rows.map(([label, addr]) => `
+      <div class="ship-row">
+        <div class="ship-text">
+          <span class="ship-label">${label}</span>
+          <span class="ship-address">${addr}</span>
+        </div>
+        <a href="#" class="change">Change</a>
+      </div>`).join('');
+  }
+  renderShipRows();
+  applyFulfillment();
 
   // ========= DELIVERY OPTIONS =========
   document.querySelectorAll('.delivery-option').forEach(opt => {
     opt.addEventListener('click', () => {
       document.querySelectorAll('.delivery-option').forEach(o => o.classList.remove('active'));
       opt.classList.add('active');
+      renderShipRows();
+      applyFulfillment();
     });
   });
 

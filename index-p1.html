@@ -1419,6 +1419,7 @@
         </div>
       </div>
 
+      <div class="ship-rows">
       <div class="ship-row">
         <div class="ship-text">
           <span class="ship-label">Ship to:</span>
@@ -1426,8 +1427,9 @@
         </div>
         <a href="#" class="change">Change</a>
       </div>
+      </div>
 
-      <div class="limit-notice" role="status">
+      <div class="limit-notice hidden" role="status">
         <i class="info-dot" aria-hidden="true">i</i>
         <span>Only <strong>24</strong> available for shipping</span>
       </div>
@@ -1435,7 +1437,7 @@
       <div class="buy-row">
         <div class="qty">
           <button type="button" id="qtyMinus" aria-label="Decrease quantity">−</button>
-          <input type="number" id="qtyInput" value="24" min="1" max="24" />
+          <input type="number" id="qtyInput" value="1" min="1" max="24" />
           <button type="button" id="qtyPlus" aria-label="Increase quantity">+</button>
         </div>
         <button class="btn-primary" id="addToBag">Add to Bag</button>
@@ -1995,17 +1997,29 @@
   // ========= QTY =========
   const qtyInput = document.getElementById('qtyInput');
   if (qtyInput) {
-    const qtyMax = parseInt(qtyInput.getAttribute('max') || '', 10) || Infinity;
+    // The cap only applies to Shipping; Pickup and 2-hr Delivery are unlimited
+    const shippingMax = parseInt(qtyInput.getAttribute('max') || '', 10) || Infinity;
     const qtyMin = parseInt(qtyInput.getAttribute('min') || '1', 10) || 1;
     const plusBtn = document.getElementById('qtyPlus');
     const minusBtn = document.getElementById('qtyMinus');
     const limitNotice = document.querySelector('.limit-notice');
+    let qtyMax = shippingMax;
+    const applyDeliveryLimit = () => {
+      const active = document.querySelector('.delivery-option.active');
+      qtyMax = active && active.dataset.opt === 'shipping' ? shippingMax : Infinity;
+      if (isFinite(qtyMax)) qtyInput.setAttribute('max', qtyMax);
+      else qtyInput.removeAttribute('max');
+      const v = parseInt(qtyInput.value || '1', 10);
+      if (v > qtyMax) qtyInput.value = qtyMax;
+      syncQtyButtons();
+    };
+    window.applyDeliveryLimit = applyDeliveryLimit;
     const syncQtyButtons = () => {
       const v = parseInt(qtyInput.value || '1', 10);
       plusBtn.disabled = v >= qtyMax;
       minusBtn.disabled = v <= qtyMin;
-      if (limitNotice && isFinite(qtyMax)) {
-        limitNotice.classList.toggle('hidden', v < qtyMax - 1);
+      if (limitNotice) {
+        limitNotice.classList.toggle('hidden', !isFinite(qtyMax) || v < qtyMax);
       }
     };
     plusBtn.addEventListener('click', () => {
@@ -2017,7 +2031,8 @@
       syncQtyButtons();
     });
     qtyInput.addEventListener('input', syncQtyButtons);
-    syncQtyButtons();
+    qtyInput.addEventListener('change', applyDeliveryLimit);
+    applyDeliveryLimit();
   }
 
   document.getElementById('addToBag')?.addEventListener('click', (e) => {
@@ -2031,11 +2046,36 @@
     }, 1200);
   });
 
+  // ========= SHIP / PICKUP / DELIVER ADDRESS =========
+  // Address rows follow the selected delivery option
+  const SHIP_ROWS = {
+    shipping: [['Ship to:', '1451 University Ave, St Paul']],
+    pickup: [['Pickup from:', 'CosmoProf #4212 - 193 Pennsylvania Ave E, St Paul']],
+    '2hr': [['Deliver to:', '1451 University Ave, St Paul']],
+  };
+  function renderShipRows() {
+    const wrap = document.querySelector('.ship-rows');
+    const active = document.querySelector('.delivery-option.active');
+    const rows = active && SHIP_ROWS[active.dataset.opt];
+    if (!wrap || !rows) return;
+    wrap.innerHTML = rows.map(([label, addr]) => `
+      <div class="ship-row">
+        <div class="ship-text">
+          <span class="ship-label">${label}</span>
+          <span class="ship-address">${addr}</span>
+        </div>
+        <a href="#" class="change">Change</a>
+      </div>`).join('');
+  }
+  renderShipRows();
+
   // ========= DELIVERY OPTIONS =========
   document.querySelectorAll('.delivery-option').forEach(opt => {
     opt.addEventListener('click', () => {
       document.querySelectorAll('.delivery-option').forEach(o => o.classList.remove('active'));
       opt.classList.add('active');
+      renderShipRows();
+      window.applyDeliveryLimit?.();
     });
   });
 

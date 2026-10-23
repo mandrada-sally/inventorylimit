@@ -1418,6 +1418,7 @@
         </div>
       </div>
 
+      <div class="ship-rows">
       <div class="ship-row">
         <div class="ship-text">
           <span class="ship-label">Ship to:</span>
@@ -1425,8 +1426,9 @@
         </div>
         <a href="#" class="change">Change</a>
       </div>
+      </div>
 
-      <div class="limit-notice" role="status">
+      <div class="limit-notice hidden" role="status">
         <i class="info-dot" aria-hidden="true">i</i>
         <span>You can add up to <strong>10</strong> items to your Bag</span>
       </div>
@@ -1434,7 +1436,7 @@
       <div class="buy-row">
         <div class="qty">
           <button type="button" id="qtyMinus" aria-label="Decrease quantity">−</button>
-          <input type="number" id="qtyInput" value="10" min="1" max="10" />
+          <input type="number" id="qtyInput" value="1" min="1" max="10" />
           <button type="button" id="qtyPlus" aria-label="Increase quantity">+</button>
         </div>
         <button class="btn-primary" id="addToBag">Add to Bag</button>
@@ -2004,7 +2006,7 @@
       plusBtn.disabled = v >= qtyMax;
       minusBtn.disabled = v <= qtyMin;
       if (limitNotice && isFinite(qtyMax)) {
-        limitNotice.classList.toggle('hidden', v < qtyMax - 1);
+        limitNotice.classList.toggle('hidden', v < qtyMax);
       }
     };
     plusBtn.addEventListener('click', () => {
@@ -2030,11 +2032,35 @@
     }, 1200);
   });
 
+  // ========= SHIP / PICKUP / DELIVER ADDRESS =========
+  // Address rows follow the selected delivery option
+  const SHIP_ROWS = {
+    shipping: [['Ship to:', '1451 University Ave, St Paul']],
+    pickup: [['Pickup from:', 'CosmoProf #4212 - 193 Pennsylvania Ave E, St Paul']],
+    '2hr': [['Deliver to:', '1451 University Ave, St Paul']],
+  };
+  function renderShipRows() {
+    const wrap = document.querySelector('.ship-rows');
+    const active = document.querySelector('.delivery-option.active');
+    const rows = active && SHIP_ROWS[active.dataset.opt];
+    if (!wrap || !rows) return;
+    wrap.innerHTML = rows.map(([label, addr]) => `
+      <div class="ship-row">
+        <div class="ship-text">
+          <span class="ship-label">${label}</span>
+          <span class="ship-address">${addr}</span>
+        </div>
+        <a href="#" class="change">Change</a>
+      </div>`).join('');
+  }
+  renderShipRows();
+
   // ========= DELIVERY OPTIONS =========
   document.querySelectorAll('.delivery-option').forEach(opt => {
     opt.addEventListener('click', () => {
       document.querySelectorAll('.delivery-option').forEach(o => o.classList.remove('active'));
       opt.classList.add('active');
+      renderShipRows();
     });
   });
 

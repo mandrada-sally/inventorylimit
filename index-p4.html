@@ -1414,6 +1414,7 @@
         </div>
       </div>
 
+      <div class="ship-rows">
       <div class="ship-row">
         <div class="ship-text">
           <span class="ship-label">Deliver from:</span>
@@ -1427,6 +1428,7 @@
           <span class="ship-address">1451 University Ave, St Paul</span>
         </div>
         <a href="#" class="change">Change</a>
+      </div>
       </div>
 
       <div class="limit-notice" role="status">
@@ -2012,11 +2014,35 @@
     }, 1200);
   });
 
+  // ========= SHIP / PICKUP / DELIVER ADDRESS =========
+  // Address rows follow the selected delivery option
+  const SHIP_ROWS = {
+    shipping: [['Ship to:', '1451 University Ave, St Paul']],
+    pickup: [['Pickup from:', 'CosmoProf #4212 - 193 Pennsylvania Ave E, St Paul']],
+    '2hr': [['Deliver from:', '193 Pennsylvania Ave E, St Paul'], ['Deliver to:', '1451 University Ave, St Paul']],
+  };
+  function renderShipRows() {
+    const wrap = document.querySelector('.ship-rows');
+    const active = document.querySelector('.delivery-option.active');
+    const rows = active && SHIP_ROWS[active.dataset.opt];
+    if (!wrap || !rows) return;
+    wrap.innerHTML = rows.map(([label, addr]) => `
+      <div class="ship-row">
+        <div class="ship-text">
+          <span class="ship-label">${label}</span>
+          <span class="ship-address">${addr}</span>
+        </div>
+        <a href="#" class="change">Change</a>
+      </div>`).join('');
+  }
+  renderShipRows();
+
   // ========= DELIVERY OPTIONS =========
   document.querySelectorAll('.delivery-option').forEach(opt => {
     opt.addEventListener('click', () => {
       document.querySelectorAll('.delivery-option').forEach(o => o.classList.remove('active'));
       opt.classList.add('active');
+      renderShipRows();
     });
   });
 

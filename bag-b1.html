@@ -411,6 +411,12 @@
     height: 48px; background: var(--black); color: var(--white);
     border: 0; border-radius: 6px; font-size: 15px; font-weight: 500;
   }
+  .btn-checkout[aria-disabled="true"] { background: #d1d5db; color: #6b7280; cursor: not-allowed; }
+  @keyframes bagAttention {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(201, 49, 57, 0); }
+    50% { box-shadow: 0 0 0 4px rgba(201, 49, 57, 0.35); }
+  }
+  .bag-item.attention { animation: bagAttention 0.6s ease-in-out 3; }
   .btn-applepay {
     height: 48px; background: var(--white); color: var(--black);
     border: 1px solid var(--black); border-radius: 6px;
@@ -944,12 +950,37 @@
     setText('.sum-savecash', fmt(hst));
     setText('.sum-total', fmt(total));
     setText('.sum-checkout', `Checkout (${lineCount})`);
+    refreshCheckout();
   }
+
+  // Checkout is blocked while any item still has an availability issue;
+  // tapping it anyway takes the user to that item
+  function firstBagIssue() {
+    return document.querySelector('.bag-item.warn, .bag-item.unavailable');
+  }
+  function refreshCheckout() {
+    const blocked = !!firstBagIssue();
+    document.querySelectorAll('.sum-checkout').forEach(btn => {
+      btn.setAttribute('aria-disabled', blocked ? 'true' : 'false');
+    });
+  }
+  document.querySelectorAll('.sum-checkout').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const issue = firstBagIssue();
+      if (!issue) return;
+      e.preventDefault();
+      issue.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      issue.classList.remove('attention');
+      void issue.offsetWidth;
+      issue.classList.add('attention');
+    });
+  });
 
   function refreshAvailabilityAlert() {
     const stillWarn = document.querySelector('.bag-item.warn, .bag-item.unavailable');
     const alert = document.querySelector('.bag-alert');
     if (alert) alert.style.display = stillWarn ? '' : 'none';
+    refreshCheckout();
   }
 
   // "Review" link smooth-scrolls to the first problematic item
