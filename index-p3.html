@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ColorLast Shampoo — P3: Limit of 1 (Pickup)</title>
+<title>ColorLast Shampoo — P3: Limit of 1 (Pickup &amp; 2-Hour Delivery)</title>
 <style>
   :root {
     --black: #000;
@@ -1999,11 +1999,11 @@
     });
   }
 
-  // ========= 1-BOTTLE LIMIT (PICKUP ONLY) =========
-  // Pickup can reserve 1 bottle: no qty stepper, limit notice, and once added
-  // the CTA becomes "Go to Bag". Shipping and 2-hr Delivery are unlimited.
-  const LIMIT_OPT = 'pickup';
-  let pickupInBag = false;
+  // ========= 1-BOTTLE LIMIT (PICKUP + 2-HR DELIVERY) =========
+  // Pickup and 2-hr Delivery can each reserve 1 bottle: no qty stepper, limit
+  // notice, and once added the CTA becomes "Go to Bag". Shipping is unlimited.
+  const LIMIT_LABELS = { pickup: 'Pickup', '2hr': '2-Hour Delivery' };
+  const inBag = new Set();
   const activeOpt = () => document.querySelector('.delivery-option.active')?.dataset.opt;
   function setCta(state) {
     const btn = document.getElementById('addToBag') || document.getElementById('goToBag');
@@ -2026,27 +2026,30 @@
     }
   }
   function applyFulfillment() {
-    const limited = activeOpt() === LIMIT_OPT;
+    const opt = activeOpt();
+    const limited = opt in LIMIT_LABELS;
+    const added = inBag.has(opt);
     const notice = document.querySelector('.limit-notice');
     document.querySelector('.buy-row')?.classList.toggle('no-qty', limited);
     if (notice) {
       notice.classList.toggle('hidden', !limited);
-      notice.style.alignItems = pickupInBag ? 'flex-start' : '';
-      notice.innerHTML = pickupInBag
+      notice.style.alignItems = added ? 'flex-start' : '';
+      notice.innerHTML = added
         ? '<i class="info-dot" aria-hidden="true">i</i><span><strong>This product is already in your Bag.</strong> You can add 1 to your Bag.</span>'
-        : '<i class="info-dot" aria-hidden="true">i</i><span class="limit-text">Only <strong>1</strong> available item for Pickup</span>';
+        : `<i class="info-dot" aria-hidden="true">i</i><span class="limit-text">Only <strong>1</strong> available item for ${LIMIT_LABELS[opt] || ''}</span>`;
     }
-    setCta(limited && pickupInBag ? 'inBag' : 'add');
+    setCta(limited && added ? 'inBag' : 'add');
   }
   document.querySelector('.buy-row')?.addEventListener('click', (e) => {
     const btn = e.target.closest('#addToBag');
     if (!btn || btn.disabled) return;
-    const limited = activeOpt() === LIMIT_OPT;
+    const opt = activeOpt();
+    const limited = opt in LIMIT_LABELS;
     btn.textContent = 'Added ✓';
     btn.style.background = '#0a8043';
     btn.disabled = true;
     setTimeout(() => {
-      if (limited) pickupInBag = true;
+      if (limited) inBag.add(opt);
       applyFulfillment();
     }, limited ? 900 : 1200);
   });
