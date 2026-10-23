@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cosmo Prof — Inventory Limit Experience</title>
+<style>
+  :root {
+    --black: #000;
+    --white: #fff;
+    --text: #1a1a1a;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --border-strong: #d1d5db;
+    --blue-tint: #e8f1fb;
+    --blue-text: #1e5fbf;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text);
+    background: #f6f7f9;
+    font-size: 14px;
+    line-height: 1.4;
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 64px 32px 96px;
+  }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  h1 {
+    margin: 0 0 10px 0;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .lede {
+    color: #4b5563;
+    font-size: 16px;
+    max-width: 640px;
+    margin: 0 0 40px 0;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 720px) {
+    .grid { grid-template-columns: 1fr; }
+    .wrap { padding: 40px 20px 72px; }
+    h1 { font-size: 26px; }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 22px 20px;
+    transition: border-color 150ms, box-shadow 150ms, transform 150ms;
+  }
+  .card:hover {
+    border-color: #9ca3af;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    transform: translateY(-1px);
+  }
+  .card-tag {
+    align-self: flex-start;
+    background: #111;
+    color: var(--white);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 4px 0 0 0;
+  }
+  .card-desc {
+    color: #4b5563;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .card-notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--blue-tint);
+    border: 1px solid #cfe0f4;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    margin-top: 6px;
+  }
+  .card-notice i {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--blue-text);
+    color: var(--white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    font-style: normal;
+  }
+  .card-cta {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: var(--black);
+    color: var(--white);
+    border-radius: 6px;
+    padding: 11px 18px;
+    font-weight: 500;
+    font-size: 14px;
+  }
+  .card-cta svg { width: 14px; height: 14px; }
+
+  .footer {
+    margin-top: 48px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="eyebrow">Cosmo Prof · PDP Exploration</div>
+  <h1>Inventory Limit Experience</h1>
+  <p class="lede">Four scenarios that signal purchase constraints on the product detail page. Pick one to preview the full desktop, tablet, and mobile layout.</p>
+
+  <div class="grid">
+    <a class="card" href="index-p1.html">
+      <span class="card-tag">P1 · Availability Limit</span>
+      <div class="card-title">Shipping inventory cap</div>
+      <div class="card-desc">Only a limited number of units can ship. Qty selector maxes out at the available count.</div>
+      <div class="card-notice"><i>i</i>Only <strong style="margin:0 2px;">24</strong> available for shipping</div>
+      <span class="card-cta">Open scenario
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </span>
+    </a>
+
+    <a class="card" href="index-p2.html">
+      <span class="card-tag">P2 · Purchase Limit</span>
+      <div class="card-title">Per-order maximum</div>
+      <div class="card-desc">Inventory is fine but a per-order policy caps how many a single customer can buy.</div>
+      <div class="card-notice"><i>i</i>You can add up to <strong style="margin:0 2px;">10</strong> items to your Bag</div>
+      <span class="card-cta">Open scenario
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </span>
+    </a>
+
+    <a class="card" href="index-p3.html">
+      <span class="card-tag">P3 · Limit of 1</span>
+      <div class="card-title">2-Hour Delivery, one unit only</div>
+      <div class="card-desc">Only one unit is reservable for 2-hour delivery. The qty selector is removed; Add to Bag spans full width.</div>
+      <div class="card-notice"><i>i</i>Only <strong style="margin:0 2px;">1</strong> available item for 2-Hour Delivery</div>
+      <span class="card-cta">Open scenario
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </span>
+    </a>
+
+    <a class="card" href="index-p4.html">
+      <span class="card-tag">P4 · Limit Reached</span>
+      <div class="card-title">Already in Bag</div>
+      <div class="card-desc">Customer has already added the max for this delivery option. The primary CTA switches to Go to Bag.</div>
+      <div class="card-notice"><i>i</i><span><strong>This product is already in your Bag.</strong> You can add 1 to your Bag.</span></div>
+      <span class="card-cta">Open scenario
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </span>
+    </a>
+  </div>
+
+  <div class="eyebrow" style="margin-top: 56px;">Shopping Bag</div>
+  <h2 style="font-size: 22px; font-weight: 700; margin: 0 0 10px 0; letter-spacing: -0.01em;">Bag scenarios</h2>
+  <p class="lede" style="margin-bottom: 24px;">How inventory issues appear in the bag, and the fallbacks offered when they do.</p>
+
+  <div class="grid">
+    <a class="card" href="bag-b1.html">
+      <span class="card-tag">B1 · Warning only</span>
+      <div class="card-title">Shipping availability warning</div>
+      <div class="card-desc">An item in the bag exceeds its shipping cap. The line turns red with a quantity-adjust suggestion.</div>
+      <div class="card-notice" style="background: #fdebec; border-color: #f5c6c9; color: #c93139;">
+        <i style="background: #c93139;">!</i>Only 6 of 10 available for Shipping
+      </div>
+      <span class="card-cta">Open scenario
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </span>
+    </a>
+
+    <a class="card" href="bag-b2.html">
+      <span class="card-tag">B2 · Pickup fallback</span>
+      <div class="card-title">Switch to In-Store Pickup</div>
+      <div class="card-desc">Same shipping cap as B1, plus a green fallback: all 10 are reservable for in-store pickup within 2 hours.</div>
+      <div class="card-notice" style="background: #e9f5ec; border-color: #bfe2c6; color: #0a6b2e;">
+        <i style="background: #0a6b2e;">✓</i>All 10 available for In-Store Pickup
+      </div>
+      <span class="card-cta">Open scenario
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </span>
+    </a>
+
+    <a class="card" href="bag-b3.html">
+      <span class="card-tag">B3 · Different store</span>
+      <div class="card-title">2-Hour Delivery, switch store</div>
+      <div class="card-desc">Bag is set to 2-Hour Delivery with a shortfall at the chosen store. Fallback suggests a different nearby store.</div>
+      <div class="card-notice" style="background: #e9f5ec; border-color: #bfe2c6; color: #0a6b2e;">
+        <i style="background: #0a6b2e;">✓</i>All 10 at 890 Elm St., 3.2 mi
+      </div>
+      <span class="card-cta">Open scenario
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </span>
+    </a>
+
+    <a class="card" href="bag-r4.html">
+      <span class="card-tag">R4 · Out everywhere</span>
+      <div class="card-title">Out of stock across all methods</div>
+      <div class="card-desc">No method or store can fulfill the item. The scenario surfaces a full-width Remove as the primary action.</div>
+      <div class="card-notice" style="background: #fdebec; border-color: #f5c6c9; color: #c93139;">
+        <i style="background: #c93139;">!</i>Out of stock
+      </div>
+      <span class="card-cta">Open scenario
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </span>
+    </a>
+  </div>
+
+  <div class="footer">Based on exploration · ColorLast Shampoo for Color-Treated Hair</div>
+</main>
+</body>
+</html>
